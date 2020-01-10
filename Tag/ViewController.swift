@@ -371,8 +371,39 @@ extension ViewController: NFCNDEFReaderSessionDelegate {
                     session.invalidate()
                     
                 case .readOnly:
-                    session.alertMessage = "Tag is read only."
-                    session.invalidate()
+                    session.alertMessage = "Reading Reciept..."
+                    tag.readNDEF(completionHandler: { (message: NFCNDEFMessage?, error: Error?) in
+                        var statusMessage: String
+                        if nil != error || nil == message {
+                            statusMessage = "Fail to read NDEF from tag"
+                        } else {
+                            statusMessage = "Found 1 NDEF message"
+                            DispatchQueue.main.async {
+                                // Process detected NFCNDEFMessage objects.
+                                if message != nil {
+                                    let records = message!.records
+                                    let receiptData = records.first?.payload ?? Data()
+                                    
+                                    print(receiptData)
+                                    
+                                    let decoder = JSONDecoder()
+                                    if let decodedReceipt = try? decoder.decode(Receipt.self, from: receiptData) {
+                                        print(decodedReceipt)
+                                    }
+                                    
+                                    //let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                                    //let vc = storyboard.instantiateViewController(withIdentifier: "ViewController") as! ViewController
+                                    //vc.modalPresentationStyle = .fullScreen
+                                    //self.present(vc, animated: false, completion: nil)
+                                    //self.navigationController?.pushViewController(vc, animated: true)
+                                    
+                                }
+                            }
+                        }
+                        
+                        session.alertMessage = statusMessage
+                        session.invalidate()
+                    })
                     
                 case .readWrite:
                     session.alertMessage = "Reading Reciept..."
@@ -408,6 +439,7 @@ extension ViewController: NFCNDEFReaderSessionDelegate {
                         session.alertMessage = statusMessage
                         session.invalidate()
                     })
+                    
                 @unknown default:
                     session.alertMessage = "Unknown NDEF tag status."
                     session.invalidate()
