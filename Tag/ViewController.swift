@@ -63,7 +63,7 @@ class ViewController: UIViewController {
         SearchBar.dropShadow(radius: 5, widthOffset: 0, heightOffset: 1)
         SearchButtonContainer.dropShadow(radius: 2, widthOffset: 1, heightOffset: 1)
         
-        SearchButtonContainer.layer.cornerRadius = 12
+        SearchButtonContainer.layer.cornerRadius = 24
         
         NotificationCenter.default.addObserver(
             self,
