@@ -10,12 +10,12 @@ import UIKit
 
 extension UIView {
 
-    func dropShadow(radius: Int) {
+    func dropShadow(radius: Int, widthOffset: Int, heightOffset: Int) {
         
         self.layer.masksToBounds = false
         self.layer.shadowColor = UIColor.black.cgColor
         self.layer.shadowOpacity = 0.25
-        self.layer.shadowOffset = CGSize(width: 1, height: 1)
+        self.layer.shadowOffset = CGSize(width: widthOffset, height: heightOffset)
         self.layer.shadowRadius = CGFloat(radius)
         //self.layer.shadowPath = UIBezierPath(rect: self.bounds).cgPath
         self.layer.shouldRasterize = true
@@ -23,4 +23,7 @@ extension UIView {
 
     }
     
+    func constraint(withIdentifier: String) -> NSLayoutConstraint? {
+        return self.constraints.filter { $0.identifier == withIdentifier }.first
+    }
 }

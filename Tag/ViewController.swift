@@ -10,7 +10,15 @@ import UIKit
 import CoreNFC
 import Firebase
 
+// Globals
+
+// Variables
 var receipts = [Receipt]()
+var searchedReceipts = [Receipt]()
+var searchMode = Bool()
+var keyboardHeight:CGFloat = 0
+
+// Constants
 let rowHeight = CGFloat(33)
 let documentDirectory = FileManager.default.urls(for: FileManager.SearchPathDirectory.cachesDirectory, in: FileManager.SearchPathDomainMask.userDomainMask).first!
 let saveFileURL = documentDirectory.appendingPathComponent("receipts.json")
@@ -20,6 +28,13 @@ class ViewController: UIViewController {
     @IBOutlet weak var NFCButton: UIView!
     @IBOutlet weak var Header: UIView!
     @IBOutlet weak var ReceiptCollectionView: UICollectionView!
+    @IBOutlet weak var SearchBar: UISearchBar!
+    @IBOutlet weak var SearchButtonContainer: UIView!
+    @IBOutlet weak var SearchButton: UIButton!
+    
+    @IBAction func clickedSearchToggle(_ sender: Any) {
+        toggleSearchBar()
+    }
     
     @IBAction func clickedScan(_ sender: Any) {
         guard NFCNDEFReaderSession.readingAvailable else {
@@ -38,30 +53,97 @@ class ViewController: UIViewController {
     }
     
     let ref = Database.database().reference()
+    let uID = 1
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
+        Header.dropShadow(radius: 5, widthOffset: 0, heightOffset: 1)
+        SearchBar.dropShadow(radius: 5, widthOffset: 0, heightOffset: 1)
+        SearchButtonContainer.dropShadow(radius: 2, widthOffset: 1, heightOffset: 1)
+        
+        SearchButtonContainer.layer.cornerRadius = 12
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillShow),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+        
+        SearchBar.layer.borderWidth = 1
+        SearchBar.layer.borderColor = UIColor.white.cgColor
+        SearchBar.delegate = self
+        
+        toggleSearchBar()
+        
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
+        
+        ReceiptCollectionView.refreshControl = refreshControl
         ReceiptCollectionView.dataSource = self
         ReceiptCollectionView.delegate = self
         
-        Header.layer.shadowColor = UIColor.black.cgColor
-        Header.layer.shadowOpacity = 0.25
-        Header.layer.shadowRadius = 5
-        Header.layer.shadowOffset = CGSize(width: 0, height: 1)
-        
         NFCButton.layer.cornerRadius = 5
         NFCButton.clipsToBounds = true
-        NFCButton.dropShadow(radius: 5)
+        NFCButton.dropShadow(radius: 5, widthOffset: 1, heightOffset: 1)
         
         receipts = loadReceiptData()
         self.ReceiptCollectionView.reloadData()
         
-        updateReceiptData(userID: 1)
+        updateReceiptData(userID: uID, completion: {result in
+            if result == true {
+                self.ReceiptCollectionView.reloadData()
+            }
+        })
     }
     
-    func updateReceiptData(userID: Int) {
+    @objc func keyboardWillShow(_ notification: Notification) {
+        if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+            let keyboardRectangle = keyboardFrame.cgRectValue
+            keyboardHeight = keyboardRectangle.height
+        }
+    }
+    
+    func toggleSearchBar() {
+        if let searchBarHeight = SearchBar.constraint(withIdentifier: "SearchBarHeight")?.constant {
+            if searchBarHeight == 44 {
+                
+                self.SearchBar.constraint(withIdentifier: "SearchBarHeight")?.constant = 0
+                self.Header.layer.shadowOpacity = 0.25
+                self.SearchBar.layer.shadowOpacity = 0
+                self.SearchButton.setImage(UIImage(systemName: "magnifyingglass"), for: .normal)
+                self.SearchBar.endEditing(true)
+                keyboardHeight = 0
+                searchedReceipts.removeAll()
+                searchMode = false
+                self.ReceiptCollectionView.reloadData()
+                
+            } else {
+                
+                self.SearchBar.constraint(withIdentifier: "SearchBarHeight")?.constant = 44
+                self.Header.layer.shadowOpacity = 0
+                self.SearchBar.layer.shadowOpacity = 0.25
+                self.SearchButton.setImage(UIImage(systemName: "xmark"), for: .normal)
+                searchMode = true
+                self.ReceiptCollectionView.reloadData()
+                
+            }
+        }
+    }
+    
+    @objc func handleRefresh() {
+        updateReceiptData(userID: uID, completion: { result in
+            if result == true {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    self.ReceiptCollectionView.refreshControl?.endRefreshing()
+                }
+            }
+        })
+    }
+    
+    func updateReceiptData(userID: Int, completion: ((Bool) -> ())) {
         var newReceipts = [Receipt]()
         
         ref.child("users").child(String(userID)).child("receipts").observeSingleEvent(of: .value, with: { (snapshot) in
@@ -93,11 +175,11 @@ class ViewController: UIViewController {
             
             receipts = newReceipts
             self.saveReceiptData()
-            self.ReceiptCollectionView.reloadData()
             
         }) { (error) in
             print(error.localizedDescription)
         }
+        completion(true)
     }
     
     func saveReceiptData() {
@@ -130,7 +212,7 @@ class ViewController: UIViewController {
 
 class ReceiptCollectionViewCell: UICollectionViewCell {
     
-    var outerIndex = Int()
+    var receiptItems = [Receipt.ReceiptItem]()
     @IBOutlet weak var ContainerView: UIView!
     @IBOutlet weak var ReceiptItemTableView: UITableView!
     @IBOutlet weak var StoreNameLabel: UILabel!
@@ -149,22 +231,33 @@ class ReceiptItemTableViewCell: UITableViewCell {
 extension ViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return receipts.count
+        if searchMode == true {
+            return searchedReceipts.count
+        } else {
+            return receipts.count
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         let cell = ReceiptCollectionView.dequeueReusableCell(withReuseIdentifier: "receiptCell", for: indexPath) as! ReceiptCollectionViewCell
         
+        var dataSource = [Receipt]()
+        if searchMode == true {
+            dataSource = searchedReceipts
+        } else {
+            dataSource = receipts
+        }
+        
         cell.ContainerView.layer.cornerRadius = 10
         cell.ContainerView.clipsToBounds = true
-        cell.contentView.dropShadow(radius: 5)
+        cell.contentView.dropShadow(radius: 5, widthOffset: 1, heightOffset: 1)
         
-        cell.StoreNameLabel.text = receipts[indexPath.item].ReceiptStoreName
-        cell.TotalPriceLabel.text = "$" + String(receipts[indexPath.item].ReceiptTotal)
+        cell.StoreNameLabel.text = dataSource[indexPath.item].ReceiptStoreName
+        cell.TotalPriceLabel.text = "$" + String(dataSource[indexPath.item].ReceiptTotal)
         cell.ReceiptItemTableView.delegate = cell
         cell.ReceiptItemTableView.dataSource = cell
-        cell.outerIndex = indexPath.item
+        cell.receiptItems = dataSource[indexPath.item].ReceiptItems
         cell.ReceiptItemTableView.reloadData()
         
         return cell
@@ -182,14 +275,25 @@ extension ViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         let width = (self.view.window?.frame.width ?? UIScreen.main.bounds.width) - 10
-        let numberOfItems = CGFloat(receipts[indexPath.item].ReceiptItems.count)
-        let height = numberOfItems * (rowHeight) + (86 + 86)
+        
+        var numberOfItems = Int()
+        if searchMode == true {
+            numberOfItems = searchedReceipts[indexPath.item].ReceiptItems.count
+        } else {
+            numberOfItems = receipts[indexPath.item].ReceiptItems.count
+        }
+        
+        let height = CGFloat(numberOfItems) * (rowHeight) + (86 + 86)
         return CGSize(width: width, height: height)
     }
     
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         insetForSectionAt section: Int) -> UIEdgeInsets {
+        
+        if searchMode == true {
+            return UIEdgeInsets(top: 5, left: 5, bottom: keyboardHeight - 5, right: 5)
+        }
         return UIEdgeInsets(top: 5, left: 5, bottom: 80, right: 5)
     }
     
@@ -208,13 +312,13 @@ extension ReceiptCollectionViewCell: UITableViewDelegate {
 extension ReceiptCollectionViewCell: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return receipts[outerIndex].ReceiptItems.count
+        return receiptItems.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = ReceiptItemTableView.dequeueReusableCell(withIdentifier: "receiptItemCell", for: indexPath) as! ReceiptItemTableViewCell
-        let item = receipts[self.outerIndex].ReceiptItems[indexPath.item]
+        let item = receiptItems[indexPath.item]
         
         cell.ItemNameLabel.text = item.ItemName
         cell.ItemQtyLabel.text = String(format: "x%.d", item.ItemQty)
@@ -333,5 +437,26 @@ extension ViewController: NFCNDEFReaderSessionDelegate {
     func readerSession(_ session: NFCNDEFReaderSession, didDetectNDEFs messages: [NFCNDEFMessage]) {
     }
     
+    
+}
+
+extension ViewController: UISearchBarDelegate {
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        
+        let text = searchText
+        searchedReceipts.removeAll()
+        for r in receipts {
+            if r.HasText(text: text) {
+                searchedReceipts.append(r)
+            }
+        }
+        self.ReceiptCollectionView.reloadData()
+        
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = ""
+    }
     
 }

@@ -38,4 +38,16 @@ class Receipt: Codable {
         
     }
     
+    func HasText(text: String) -> Bool {
+        
+        if ReceiptStoreName.uppercased().contains(text.uppercased()) { return true }
+        
+        for item in ReceiptItems {
+            if item.ItemName.uppercased().contains(text.uppercased()) { return true }
+        }
+        
+        return false
+        
+    }
+    
 }
