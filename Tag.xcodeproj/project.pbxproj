@@ -15,6 +15,7 @@
 		1C1F6A3C23C309BD009B1FC7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1C1F6A3A23C309BD009B1FC7 /* LaunchScreen.storyboard */; };
 		1C516AD623C4241D00470EF6 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C516AD523C4241D00470EF6 /* Extensions.swift */; };
 		1CB8CBC923C42B5F00886045 /* Classes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CB8CBC823C42B5F00886045 /* Classes.swift */; };
+		1CBFEAB123CC50AF004DBD87 /* AuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CBFEAB023CC50AF004DBD87 /* AuthViewController.swift */; };
 		1CD4816D23C5C8EF00144B9E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1CD4816C23C5C8EF00144B9E /* GoogleService-Info.plist */; };
 		8AFF342087640B8102F97B7E /* Pods_Tag.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F71C2F1CC979478B59FA5CFC /* Pods_Tag.framework */; };
 /* End PBXBuildFile section */
@@ -30,6 +31,7 @@
 		1C1F6A3D23C309BD009B1FC7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1C516AD523C4241D00470EF6 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		1CB8CBC823C42B5F00886045 /* Classes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Classes.swift; sourceTree = "<group>"; };
+		1CBFEAB023CC50AF004DBD87 /* AuthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewController.swift; sourceTree = "<group>"; };
 		1CD4816C23C5C8EF00144B9E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		1CD4816E23C5C90800144B9E /* Tag.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Tag.entitlements; sourceTree = "<group>"; };
 		4E2370FC6B0AC4155E7256CD /* Pods-Tag.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tag.debug.xcconfig"; path = "Target Support Files/Pods-Tag/Pods-Tag.debug.xcconfig"; sourceTree = "<group>"; };
@@ -74,6 +76,7 @@
 				1C1F6A2F23C309BB009B1FC7 /* AppDelegate.swift */,
 				1C1F6A3123C309BB009B1FC7 /* SceneDelegate.swift */,
 				1C1F6A3323C309BB009B1FC7 /* ViewController.swift */,
+				1CBFEAB023CC50AF004DBD87 /* AuthViewController.swift */,
 				1CB8CBC823C42B5F00886045 /* Classes.swift */,
 				1C516AD523C4241D00470EF6 /* Extensions.swift */,
 				1C1F6A3523C309BB009B1FC7 /* Main.storyboard */,
@@ -222,6 +225,7 @@
 				1C1F6A3023C309BB009B1FC7 /* AppDelegate.swift in Sources */,
 				1C1F6A3223C309BB009B1FC7 /* SceneDelegate.swift in Sources */,
 				1CB8CBC923C42B5F00886045 /* Classes.swift in Sources */,
+				1CBFEAB123CC50AF004DBD87 /* AuthViewController.swift in Sources */,
 				1C516AD623C4241D00470EF6 /* Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

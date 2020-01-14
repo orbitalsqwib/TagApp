@@ -31,6 +31,34 @@ class ViewController: UIViewController {
     @IBOutlet weak var SearchBar: UISearchBar!
     @IBOutlet weak var SearchButtonContainer: UIView!
     @IBOutlet weak var SearchButton: UIButton!
+    @IBOutlet weak var ProfileButtonContainer: UIView!
+    @IBOutlet weak var ProfileButton: UIButton!
+    
+    @IBAction func clickedProfile(_ sender: Any) {
+        //Show alert to sign out/rebind/bind card?
+        let alert = UIAlertController(title: "Log Out", message: "Are you sure you want to log out?", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Log Out", style: .destructive, handler: { (result) in
+            
+            // Sign out
+            do {
+                try Auth.auth().signOut()
+            } catch let signOutError as NSError {
+                print(signOutError)
+            }
+            self.performSegue(withIdentifier: "presentAuth", sender: self)
+            
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    @IBAction func unwindAfterSigningIn(segue: UIStoryboardSegue) {
+        if let uID = Auth.auth().currentUser?.uid {
+            updateReceiptData(userID: uID) { (result) in
+                self.ReceiptCollectionView.reloadData()
+            }
+        }
+    }
     
     @IBAction func clickedSearchToggle(_ sender: Any) {
         toggleSearchBar()
@@ -53,17 +81,25 @@ class ViewController: UIViewController {
     }
     
     let ref = Database.database().reference()
-    let uID = 1
+    
+    override func viewDidAppear(_ animated: Bool) {
+        if Auth.auth().currentUser == nil {
+            self.performSegue(withIdentifier: "presentAuth", sender: self)
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
+        
         Header.dropShadow(radius: 5, widthOffset: 0, heightOffset: 1)
         SearchBar.dropShadow(radius: 5, widthOffset: 0, heightOffset: 1)
         SearchButtonContainer.dropShadow(radius: 2, widthOffset: 1, heightOffset: 1)
+        ProfileButtonContainer.dropShadow(radius: 2, widthOffset: 1, heightOffset: 1)
         
         SearchButtonContainer.layer.cornerRadius = 24
+        ProfileButtonContainer.layer.cornerRadius = 24
         
         NotificationCenter.default.addObserver(
             self,
@@ -92,11 +128,14 @@ class ViewController: UIViewController {
         receipts = loadReceiptData()
         self.ReceiptCollectionView.reloadData()
         
-        updateReceiptData(userID: uID, completion: {result in
-            if result == true {
-                self.ReceiptCollectionView.reloadData()
-            }
-        })
+        if let uID = Auth.auth().currentUser?.uid {
+            updateReceiptData(userID: uID, completion: {result in
+                if result == true {
+                    self.ReceiptCollectionView.reloadData()
+                }
+            })
+        }
+        
     }
     
     @objc func keyboardWillShow(_ notification: Notification) {
@@ -134,19 +173,21 @@ class ViewController: UIViewController {
     }
     
     @objc func handleRefresh() {
-        updateReceiptData(userID: uID, completion: { result in
-            if result == true {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                    self.ReceiptCollectionView.refreshControl?.endRefreshing()
+        if let uID = Auth.auth().currentUser?.uid {
+            updateReceiptData(userID: uID, completion: { result in
+                if result == true {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                        self.ReceiptCollectionView.refreshControl?.endRefreshing()
+                    }
                 }
-            }
-        })
+            })
+        }
     }
     
-    func updateReceiptData(userID: Int, completion: ((Bool) -> ())) {
+    func updateReceiptData(userID: String, completion: ((Bool) -> ())) {
         var newReceipts = [Receipt]()
         
-        ref.child("users").child(String(userID)).child("receipts").observeSingleEvent(of: .value, with: { (snapshot) in
+        ref.child("users").child(userID).child("receipts").observeSingleEvent(of: .value, with: { (snapshot) in
             // Get value of receipt
             let receiptArray:NSArray = snapshot.children.allObjects as NSArray
             for receipt in receiptArray {
