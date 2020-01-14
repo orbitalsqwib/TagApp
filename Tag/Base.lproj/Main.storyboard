@@ -16,13 +16,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="DAm-P5-fj5">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="426"/>
-                                <color key="backgroundColor" systemColor="systemPinkColor" red="1" green="0.1764705882" blue="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" secondItem="DAm-P5-fj5" secondAttribute="height" multiplier="69:71" id="G2L-63-UQP"/>
-                                </constraints>
-                            </imageView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NH5-0U-Sjj" userLabel="gradientView">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="agk-mW-Che" userLabel="ContainerView">
                                 <rect key="frame" x="20" y="213" width="374" height="416"/>
                                 <subviews>
@@ -100,7 +97,7 @@
                                                     <constraint firstAttribute="height" constant="50" id="fAL-AL-N3S"/>
                                                 </constraints>
                                                 <fontDescription key="fontDescription" name="Menlo-Regular" family="Menlo" pointSize="18"/>
-                                                <textInputTraits key="textInputTraits" enablesReturnKeyAutomatically="YES" textContentType="email"/>
+                                                <textInputTraits key="textInputTraits" keyboardType="emailAddress" enablesReturnKeyAutomatically="YES" textContentType="email"/>
                                             </textField>
                                         </subviews>
                                         <color key="backgroundColor" red="0.92143100499999997" green="0.92145264149999995" blue="0.92144101860000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -156,13 +153,14 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <gestureRecognizers/>
                         <constraints>
-                            <constraint firstItem="iwo-r7-rwk" firstAttribute="trailing" secondItem="DAm-P5-fj5" secondAttribute="trailing" id="2Lo-kt-ee7"/>
+                            <constraint firstItem="iwo-r7-rwk" firstAttribute="trailing" secondItem="NH5-0U-Sjj" secondAttribute="trailing" id="42y-Dd-7Sj"/>
                             <constraint firstItem="agk-mW-Che" firstAttribute="leading" secondItem="iwo-r7-rwk" secondAttribute="leading" constant="20" id="Euz-zS-FOP"/>
                             <constraint firstItem="iwo-r7-rwk" firstAttribute="trailing" secondItem="agk-mW-Che" secondAttribute="trailing" constant="20" id="QFF-jT-SOR"/>
-                            <constraint firstItem="DAm-P5-fj5" firstAttribute="top" secondItem="iwo-r7-rwk" secondAttribute="top" id="QW2-O6-wU8"/>
+                            <constraint firstItem="NH5-0U-Sjj" firstAttribute="leading" secondItem="iwo-r7-rwk" secondAttribute="leading" id="Rwe-ic-24Z"/>
+                            <constraint firstAttribute="bottom" secondItem="NH5-0U-Sjj" secondAttribute="bottom" id="UkZ-U3-lOx"/>
                             <constraint firstItem="agk-mW-Che" firstAttribute="centerY" secondItem="mFW-5f-I4y" secondAttribute="centerY" id="Z4v-Mq-41c"/>
                             <constraint firstItem="agk-mW-Che" firstAttribute="centerX" secondItem="mFW-5f-I4y" secondAttribute="centerX" id="Zbg-44-ZsN"/>
-                            <constraint firstItem="DAm-P5-fj5" firstAttribute="leading" secondItem="iwo-r7-rwk" secondAttribute="leading" id="rhj-aD-d4p"/>
+                            <constraint firstItem="NH5-0U-Sjj" firstAttribute="top" secondItem="iwo-r7-rwk" secondAttribute="top" id="z3l-jp-gqj"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="iwo-r7-rwk"/>
                         <connections>
@@ -172,6 +170,7 @@
                     <connections>
                         <outlet property="ContainerView" destination="agk-mW-Che" id="I1c-KP-C7X"/>
                         <outlet property="EmailTextField" destination="CmE-Gx-Ivm" id="nAi-u2-BNW"/>
+                        <outlet property="GradientView" destination="NH5-0U-Sjj" id="5Jp-zw-l8e"/>
                         <outlet property="LoginContainer" destination="pxT-SW-QLc" id="PQD-fB-0hF"/>
                         <outlet property="PasswordTextField" destination="XF1-Tz-PVd" id="a2M-Py-2CA"/>
                         <outlet property="SignInHeader" destination="6Dm-Vt-fVq" id="FNB-vX-6ud"/>

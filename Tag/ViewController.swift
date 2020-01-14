@@ -36,20 +36,19 @@ class ViewController: UIViewController {
     
     @IBAction func clickedProfile(_ sender: Any) {
         //Show alert to sign out/rebind/bind card?
-        let alert = UIAlertController(title: "Log Out", message: "Are you sure you want to log out?", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Log Out", style: .destructive, handler: { (result) in
+        
+        //Get status of user
+        if Auth.auth().currentUser != nil {
             
-            // Sign out
-            do {
-                try Auth.auth().signOut()
-            } catch let signOutError as NSError {
-                print(signOutError)
-            }
-            self.performSegue(withIdentifier: "presentAuth", sender: self)
+            // User currently logged in
+            askUserToLogOut()
             
-        }))
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        self.present(alert, animated: true, completion: nil)
+        } else {
+            
+            // No user logged in
+            askUserToSignIn()
+            
+        }
     }
     
     @IBAction func unwindAfterSigningIn(segue: UIStoryboardSegue) {
@@ -145,6 +144,34 @@ class ViewController: UIViewController {
         }
     }
     
+    func askUserToLogOut() {
+        let alert = UIAlertController(title: "Log Out", message: "Are you sure you want to log out?", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Log Out", style: .destructive, handler: { (result) in
+            
+            // Sign out
+            do {
+                try Auth.auth().signOut()
+            } catch let signOutError as NSError {
+                print(signOutError)
+            }
+            self.performSegue(withIdentifier: "presentAuth", sender: self)
+            
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    func askUserToSignIn() {
+        
+        let alert = UIAlertController(title: "Not Signed In", message: "Sign into the app so we can start tracking your receipts!", preferredStyle: .alert)
+        alert.addAction(.init(title: "Continue", style: .cancel, handler: { (alert) in
+            self.ReceiptCollectionView.refreshControl?.endRefreshing()
+            self.performSegue(withIdentifier: "presentAuth", sender: self)
+        }))
+        self.present(alert, animated: true, completion: nil)
+        
+    }
+    
     func toggleSearchBar() {
         if let searchBarHeight = SearchBar.constraint(withIdentifier: "SearchBarHeight")?.constant {
             if searchBarHeight == 44 {
@@ -181,6 +208,8 @@ class ViewController: UIViewController {
                     }
                 }
             })
+        } else {
+            askUserToSignIn()
         }
     }
     
@@ -220,6 +249,7 @@ class ViewController: UIViewController {
         }) { (error) in
             print(error.localizedDescription)
         }
+        
         completion(true)
     }
     

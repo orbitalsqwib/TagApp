@@ -18,6 +18,7 @@ class AuthViewController: UIViewController {
     @IBOutlet weak var LoginContainer: UIView!
     @IBOutlet weak var SignupContainer: UIView!
     
+    @IBOutlet weak var GradientView: UIView!
     @IBAction func tappedOut(_ sender: Any) {
         view.endEditing(true)
     }
@@ -85,42 +86,53 @@ class AuthViewController: UIViewController {
         ContainerView.layer.cornerRadius = 10
         LoginContainer.layer.cornerRadius = 10
         SignupContainer.layer.cornerRadius = 10
+        
+        GradientView.addGradientBackground(firstColor: .systemPink, secondColor: .white, width: Double(GradientView.bounds.width), height: Double(GradientView.bounds.height))
 
         // Do any additional setup after loading the view.
         
     }
     
     func handleAuthError(error: AuthErrorCode) {
+        
         switch error {
+            
         case .emailAlreadyInUse:
-            let alert = UIAlertController(title: "Email Not Available", message: "The email you tried to sign up with is already in use. Would you like to log in instead?", preferredStyle: .alert)
-            alert.addAction(.init(title: "Continue", style: .cancel, handler: nil))
-            self.present(alert, animated: true, completion: nil)
+            self.presentSimpleAlert(title: "Email Not Available",
+                                    message: "The email you tried to sign up with is already in use. Would you like to log in instead?",
+                                    btnMsg: "Continue")
+            
         case .invalidEmail:
-            let alert = UIAlertController(title: "Invalid Email", message: "The email you keyed in was not valid. It should follow the format xxx@xxx.xxx", preferredStyle: .alert)
-            alert.addAction(.init(title: "Continue", style: .cancel, handler: nil))
-            self.present(alert, animated: true, completion: nil)
+            self.presentSimpleAlert(title: "Invalid Email",
+                                    message: "The email you keyed in was not valid. It should follow the format xxx@xxx.xxx",
+                                    btnMsg: "Continue")
+            
         case .wrongPassword:
-            let alert = UIAlertController(title: "Wrong Password", message: "The password you keyed in was incorrect. Try again maybe?", preferredStyle: .alert)
-            alert.addAction(.init(title: "Continue", style: .cancel, handler: nil))
-            self.present(alert, animated: true, completion: nil)
+            self.presentSimpleAlert(title: "Wrong Password",
+                                    message: "The password you keyed in was incorrect. Try again maybe?",
+                                    btnMsg: "Continue")
+            
         case .tooManyRequests:
-            let alert = UIAlertController(title: "Too Many Requests", message: "You keyed in your password incorrectly too many times. Try again in a moment.", preferredStyle: .alert)
-            alert.addAction(.init(title: "Continue", style: .cancel, handler: nil))
-            self.present(alert, animated: true, completion: nil)
+            self.presentSimpleAlert(title: "Too Many Requests",
+                                    message: "You keyed in your password incorrectly too many times. Try again in a moment.",
+                                    btnMsg: "Continue")
+            
         case .userNotFound:
-            let alert = UIAlertController(title: "User Not Found", message: "We couldn't find the email you tried to log in with. Would you like to sign up instead?", preferredStyle: .alert)
-            alert.addAction(.init(title: "Continue", style: .cancel, handler: nil))
-            self.present(alert, animated: true, completion: nil)
+            self.presentSimpleAlert(title: "User Not Found",
+                                    message: "We couldn't find the email you tried to log in with. Would you like to sign up instead?",
+                                    btnMsg: "Continue")
+            
         case .networkError:
-            let alert = UIAlertController(title: "Network Error", message: "We can't communicate with our servers at the moment. :(", preferredStyle: .alert)
-            self.present(alert, animated: true, completion: nil)
-            alert.addAction(.init(title: "Continue", style: .cancel, handler: nil))
+            self.presentSimpleAlert(title: "Network Error",
+                                    message: "We can't communicate with our servers at the moment. :(",
+                                    btnMsg: "Continue")
+            
         case .weakPassword:
-            let alert = UIAlertController(title: "Password too weak", message: "Your password should be at least 6 characters long", preferredStyle: .alert)
-            self.present(alert, animated: true, completion: nil)
-            alert.addAction(.init(title: "Continue", style: .cancel, handler: nil))
-        default: break
+            self.presentSimpleAlert(title: "Password too weak",
+                                    message: "Your password should be at least 6 characters long.",
+                                    btnMsg: "Continue")
+            
+        default: return
         }
     }
     
