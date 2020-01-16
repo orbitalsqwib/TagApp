@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 extension UIView {
 
@@ -48,6 +49,14 @@ extension UIViewController {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
                    alert.addAction(.init(title: btnMsg, style: .cancel, handler: nil))
                    self.present(alert, animated: true, completion: nil)
+    }
+    
+    func signOut() {
+        do {
+            try Auth.auth().signOut()
+        } catch let signOutError as NSError {
+            print(signOutError)
+        }
     }
     
 }

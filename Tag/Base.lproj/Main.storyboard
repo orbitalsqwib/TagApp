@@ -175,7 +175,7 @@
                         <outlet property="PasswordTextField" destination="XF1-Tz-PVd" id="a2M-Py-2CA"/>
                         <outlet property="SignInHeader" destination="6Dm-Vt-fVq" id="FNB-vX-6ud"/>
                         <outlet property="SignupContainer" destination="BTo-fq-6iB" id="Fjs-i9-4To"/>
-                        <segue destination="zPL-Ig-ehq" kind="unwind" unwindAction="unwindAfterSigningInSegue:" id="Udw-bV-bdR"/>
+                        <segue destination="zPL-Ig-ehq" kind="unwind" identifier="signedIn" unwindAction="unwindAfterSigningInSegue:" id="Udw-bV-bdR"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TDe-Hc-QbR" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -499,55 +499,23 @@
                                     <constraint firstItem="KvL-jX-RmR" firstAttribute="centerY" secondItem="ttT-bM-7oh" secondAttribute="centerY" id="uOI-bU-d0I"/>
                                 </constraints>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PJs-ZX-Ksy" userLabel="buttonContainer">
-                                <rect key="frame" x="25" y="792" width="364" height="60"/>
-                                <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FMP-32-vAg">
-                                        <rect key="frame" x="0.0" y="0.0" width="364" height="60"/>
-                                        <fontDescription key="fontDescription" name="AvenirNext-DemiBold" family="Avenir Next" pointSize="20"/>
-                                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <state key="normal" title="Scan NFC"/>
-                                        <connections>
-                                            <action selector="clickedScan:" destination="BYZ-38-t0r" eventType="touchUpInside" id="bBz-ch-v2s"/>
-                                        </connections>
-                                    </button>
-                                </subviews>
-                                <color key="backgroundColor" systemColor="systemPinkColor" red="1" green="0.1764705882" blue="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="60" id="E8k-E4-jR6"/>
-                                    <constraint firstAttribute="bottom" secondItem="FMP-32-vAg" secondAttribute="bottom" id="UKW-at-Tm9"/>
-                                    <constraint firstAttribute="trailing" secondItem="FMP-32-vAg" secondAttribute="trailing" id="bWL-hm-tfZ"/>
-                                    <constraint firstItem="FMP-32-vAg" firstAttribute="top" secondItem="PJs-ZX-Ksy" secondAttribute="top" id="jeb-DF-Ax5"/>
-                                    <constraint firstItem="FMP-32-vAg" firstAttribute="leading" secondItem="PJs-ZX-Ksy" secondAttribute="leading" id="yoc-Vd-pAc"/>
-                                </constraints>
-                            </view>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="2bv-fd-hLk" secondAttribute="bottom" id="4Nb-gR-bIH"/>
                             <constraint firstItem="rw6-hy-Lhu" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="D1p-aZ-Qgx"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="PJs-ZX-Ksy" secondAttribute="trailing" constant="25" id="DwB-ql-VRN"/>
                             <constraint firstItem="2bv-fd-hLk" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="M12-VB-s2s"/>
                             <constraint firstItem="2bv-fd-hLk" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="NN7-LO-JzZ"/>
                             <constraint firstItem="rw6-hy-Lhu" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="SFu-ri-FS0"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="PJs-ZX-Ksy" secondAttribute="bottom" constant="10" id="bQb-jl-yEd"/>
                             <constraint firstItem="rw6-hy-Lhu" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="enb-qx-pRA"/>
-                            <constraint firstItem="PJs-ZX-Ksy" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="25" id="hia-LB-jWa"/>
                             <constraint firstItem="2bv-fd-hLk" firstAttribute="top" secondItem="rw6-hy-Lhu" secondAttribute="bottom" id="iPC-mV-caO"/>
                             <constraint firstItem="2bv-fd-hLk" firstAttribute="top" secondItem="rw6-hy-Lhu" secondAttribute="bottom" id="p9g-Gm-djQ"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
-                        <variation key="default">
-                            <mask key="subviews">
-                                <exclude reference="PJs-ZX-Ksy"/>
-                            </mask>
-                        </variation>
                     </view>
                     <navigationItem key="navigationItem" id="IV7-KB-azM"/>
                     <connections>
                         <outlet property="Header" destination="rw6-hy-Lhu" id="Ggl-lj-Doe"/>
-                        <outlet property="NFCButton" destination="PJs-ZX-Ksy" id="bh5-uI-gbt"/>
                         <outlet property="ProfileButton" destination="Wfd-xA-mnw" id="EzV-18-46d"/>
                         <outlet property="ProfileButtonContainer" destination="KvL-jX-RmR" id="zM1-sO-qo0"/>
                         <outlet property="ReceiptCollectionView" destination="RT9-sf-KjS" id="tTh-1G-R1l"/>

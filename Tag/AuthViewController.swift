@@ -17,8 +17,8 @@ class AuthViewController: UIViewController {
     @IBOutlet weak var PasswordTextField: UITextField!
     @IBOutlet weak var LoginContainer: UIView!
     @IBOutlet weak var SignupContainer: UIView!
-    
     @IBOutlet weak var GradientView: UIView!
+    
     @IBAction func tappedOut(_ sender: Any) {
         view.endEditing(true)
     }
@@ -30,7 +30,16 @@ class AuthViewController: UIViewController {
                 Auth.auth().signIn(withEmail: email, password: password) { (result, error) in
                     if error == nil {
                         // No error, proceed
-                        self.dismiss(animated: true, completion: nil)
+                        Auth.auth().currentUser?.getIDTokenResult(completion: { (result, error) in
+                            if let role = result?.claims["role"] as? String {
+                                if role == "cashier" || role == "company" {
+                                    self.presentSimpleAlert(title: "Invalid Account", message: "Please sign in with your personal user account and not your work account.", btnMsg: "Continue")
+                                    self.signOut()
+                                }
+                            } else {
+                                self.dismiss(animated: true, completion: nil)
+                            }
+                        })
                     } else {
                         if let errorCode = error?._code {
                             if let authError = AuthErrorCode(rawValue: errorCode) {
