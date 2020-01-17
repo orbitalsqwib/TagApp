@@ -9,5 +9,6 @@ target 'Tag' do
   pod 'Firebase/Auth'
   pod 'Firebase/Database'
   pod 'Firebase/Analytics'
+  pod 'Firebase/Functions'
 
 end

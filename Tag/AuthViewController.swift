@@ -25,60 +25,40 @@ class AuthViewController: UIViewController {
     
     @IBAction func pressedLogIn(_ sender: Any) {
         
-        if let email = EmailTextField.text {
-            if let password = PasswordTextField.text {
-                Auth.auth().signIn(withEmail: email, password: password) { (result, error) in
-                    if error == nil {
-                        // No error, proceed
-                        Auth.auth().currentUser?.getIDTokenResult(completion: { (result, error) in
-                            if let role = result?.claims["role"] as? String {
-                                if role == "cashier" || role == "company" {
-                                    self.presentSimpleAlert(title: "Invalid Account", message: "Please sign in with your personal user account and not your work account.", btnMsg: "Continue")
-                                    self.signOut()
-                                }
-                            } else {
-                                self.dismiss(animated: true, completion: nil)
-                            }
-                        })
-                    } else {
-                        if let errorCode = error?._code {
-                            if let authError = AuthErrorCode(rawValue: errorCode) {
-                                self.handleAuthError(error: authError)
-                            }
+        guard let email = EmailTextField.text else {
+            self.presentSimpleAlert(title: "No email", message: "Please enter a valid email address", btnMsg: "Ok")
+            return
+        }
+        guard let password = PasswordTextField.text else {
+            self.presentSimpleAlert(title: "No password", message: "Please enter your password", btnMsg: "Ok")
+            return
+        }
+        
+        Auth.auth().signIn(withEmail: email, password: password) { (result, error) in
+            if error == nil {
+                // No error, proceed
+                Auth.auth().currentUser?.getIDTokenResult(completion: { (result, error) in
+                    if let role = result?.claims["role"] as? String {
+                        if role == "cashier" || role == "company" {
+                            self.presentSimpleAlert(title: "Invalid Account", message: "Please sign in with your personal user account and not your work account.", btnMsg: "Continue")
+                            self.signOut()
                         }
+                    } else {
+                        self.dismiss(animated: true, completion: nil)
+                    }
+                })
+            } else {
+                if let errorCode = error?._code {
+                    if let authError = AuthErrorCode(rawValue: errorCode) {
+                        self.handleAuthError(error: authError)
                     }
                 }
-            } else {
-                // No password!
             }
-        } else {
-            // No email
         }
         
     }
     @IBAction func pressedSignUp(_ sender: Any) {
-        if let email = EmailTextField.text {
-            if let password = PasswordTextField.text {
-                Auth.auth().createUser(withEmail: email, password: password) { (result, error) in
-                    if error == nil {
-                        // No error, proceed
-                        let alert = UIAlertController(title: "Sign up successful!", message: "Your account has been created and is ready for use! :D", preferredStyle: .alert)
-                        alert.addAction(.init(title: "Let's go!", style: .cancel, handler: nil))
-                        self.present(alert, animated: true, completion: nil)
-                    } else {
-                        if let errorCode = error?._code {
-                            if let authError = AuthErrorCode(rawValue: errorCode) {
-                                self.handleAuthError(error: authError)
-                            }
-                        }
-                    }
-                }
-            } else {
-                // No password!
-            }
-        } else {
-            // No email
-        }
+        self.performSegue(withIdentifier: "presentSignup", sender: self)
     }
     
     override func viewDidLoad() {
@@ -101,50 +81,6 @@ class AuthViewController: UIViewController {
         // Do any additional setup after loading the view.
         
     }
-    
-    func handleAuthError(error: AuthErrorCode) {
-        
-        switch error {
-            
-        case .emailAlreadyInUse:
-            self.presentSimpleAlert(title: "Email Not Available",
-                                    message: "The email you tried to sign up with is already in use. Would you like to log in instead?",
-                                    btnMsg: "Continue")
-            
-        case .invalidEmail:
-            self.presentSimpleAlert(title: "Invalid Email",
-                                    message: "The email you keyed in was not valid. It should follow the format xxx@xxx.xxx",
-                                    btnMsg: "Continue")
-            
-        case .wrongPassword:
-            self.presentSimpleAlert(title: "Wrong Password",
-                                    message: "The password you keyed in was incorrect. Try again maybe?",
-                                    btnMsg: "Continue")
-            
-        case .tooManyRequests:
-            self.presentSimpleAlert(title: "Too Many Requests",
-                                    message: "You keyed in your password incorrectly too many times. Try again in a moment.",
-                                    btnMsg: "Continue")
-            
-        case .userNotFound:
-            self.presentSimpleAlert(title: "User Not Found",
-                                    message: "We couldn't find the email you tried to log in with. Would you like to sign up instead?",
-                                    btnMsg: "Continue")
-            
-        case .networkError:
-            self.presentSimpleAlert(title: "Network Error",
-                                    message: "We can't communicate with our servers at the moment. :(",
-                                    btnMsg: "Continue")
-            
-        case .weakPassword:
-            self.presentSimpleAlert(title: "Password too weak",
-                                    message: "Your password should be at least 6 characters long.",
-                                    btnMsg: "Continue")
-            
-        default: return
-        }
-    }
-    
 
     /*
     // MARK: - Navigation

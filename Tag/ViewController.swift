@@ -20,7 +20,7 @@ var keyboardHeight:CGFloat = 0
 
 // Constants
 let ref = Database.database().reference()
-let rowHeight = CGFloat(33)
+let rowHeight = CGFloat(35)
 let documentDirectory = FileManager.default.urls(for: FileManager.SearchPathDirectory.cachesDirectory, in: FileManager.SearchPathDomainMask.userDomainMask).first!
 let saveFileURL = documentDirectory.appendingPathComponent("receipts.json")
 

@@ -59,4 +59,47 @@ extension UIViewController {
         }
     }
     
+    func handleAuthError(error: AuthErrorCode) {
+        
+        switch error {
+            
+        case .emailAlreadyInUse:
+            self.presentSimpleAlert(title: "Email Not Available",
+                                    message: "The email you tried to sign up with is already in use. Would you like to log in instead?",
+                                    btnMsg: "Continue")
+            
+        case .invalidEmail:
+            self.presentSimpleAlert(title: "Invalid Email",
+                                    message: "The email you keyed in was not valid. It should follow the format xxx@xxx.xxx",
+                                    btnMsg: "Continue")
+            
+        case .wrongPassword:
+            self.presentSimpleAlert(title: "Wrong Password",
+                                    message: "The password you keyed in was incorrect. Try again maybe?",
+                                    btnMsg: "Continue")
+            
+        case .tooManyRequests:
+            self.presentSimpleAlert(title: "Too Many Requests",
+                                    message: "You keyed in your password incorrectly too many times. Try again in a moment.",
+                                    btnMsg: "Continue")
+            
+        case .userNotFound:
+            self.presentSimpleAlert(title: "User Not Found",
+                                    message: "We couldn't find the email you tried to log in with. Would you like to sign up instead?",
+                                    btnMsg: "Continue")
+            
+        case .networkError:
+            self.presentSimpleAlert(title: "Network Error",
+                                    message: "We can't communicate with our servers at the moment. :(",
+                                    btnMsg: "Continue")
+            
+        case .weakPassword:
+            self.presentSimpleAlert(title: "Password too weak",
+                                    message: "Your password should be at least 6 characters long.",
+                                    btnMsg: "Continue")
+            
+        default: return
+        }
+    }
+    
 }
