@@ -57,7 +57,7 @@ class SignupViewController: UIViewController {
                                 let code = FunctionsErrorCode(rawValue: error.code)
                                 let message = error.localizedDescription
                                 let details = error.userInfo[FunctionsErrorDetailsKey]
-                                print(code, message, details)
+                                print(code as Any, message, details as Any)
                             }
                         }
                     }
